@@ -15,11 +15,11 @@ def latest_tag() -> tuple[int, int, int]:
     ).strip()
     if not out:
         return (0, 0, 0)
-    first = out.splitlines()[0].strip()
-    m = TAG_RE.match(first)
-    if not m:
-        return (0, 0, 0)
-    return tuple(int(m.group(i)) for i in (1, 2, 3))
+    for tag in out.splitlines():
+        m = TAG_RE.match(tag.strip())
+        if m:
+            return tuple(int(m.group(i)) for i in (1, 2, 3))
+    return (0, 0, 0)
 
 
 def bump_from_labels(labels: list[str]) -> str:
