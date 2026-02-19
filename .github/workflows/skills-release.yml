@@ -46,9 +46,12 @@ jobs:
         id: policy
         run: |
           python - << 'PY'
+          import re
           from pathlib import Path
+
           txt = Path('.release-policy.yml').read_text(encoding='utf-8')
-          auto = 'auto_release: true' in txt
+          m = re.search(r"(?im)^\s*auto_release\s*:\s*(true|false)\s*(?:#.*)?$", txt)
+          auto = bool(m and m.group(1).lower() == 'true')
           with open(Path.cwd() / '.policy_out', 'w', encoding='utf-8') as f:
               f.write(f"auto_release={'true' if auto else 'false'}\n")
           PY
@@ -125,11 +128,11 @@ jobs:
         if: steps.gate.outputs.should_release == 'true'
         id: range
         run: |
-          PREV=$(git tag --list 'v*' --sort=-v:refname | head -n 1 || true)
+          PREV=$(git tag --list 'v*' --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)
           if [ -n "$PREV" ]; then
             FROM="$PREV"
           else
-            FROM=$(git rev-list --max-parents=0 HEAD)
+            FROM=$(git hash-object -t tree /dev/null)
           fi
           echo "from_ref=$FROM" >> "$GITHUB_OUTPUT"
           echo "to_ref=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
