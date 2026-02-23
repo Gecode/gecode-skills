@@ -6,6 +6,7 @@ description: "Core Gecode architecture and runtime model: spaces, propagators, b
 # Gecode General Knowledge
 
 ## Related Skills
+- Use `gecode-cmake-consumption` for downstream CMake integration, package consumption, and migration from custom `FindGecode` logic.
 - Use `gecode-modeling` for modeling choices, globals, branchings, symmetry handling, and search setup.
 - Use `gecode-propagator-implementation` for custom propagator design, posting, propagation lifecycle, and optimization.
 - Use `gecode-brancher-implementation` for custom branchers, choice/commit mechanics, and no-good literal support.

@@ -23,6 +23,7 @@ npx skills add Gecode/gecode-skills --skill gecode-modeling
 ## Available Skills
 
 - `gecode-general-knowledge`
+- `gecode-cmake-consumption`
 - `gecode-modeling`
 - `gecode-propagator-implementation`
 - `gecode-brancher-implementation`
