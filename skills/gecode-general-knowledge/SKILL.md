@@ -5,6 +5,14 @@ description: "Core Gecode architecture and runtime model: spaces, propagators, b
 
 # Gecode General Knowledge
 
+## Related Skills
+- Use `gecode-modeling` for modeling choices, globals, branchings, symmetry handling, and search setup.
+- Use `gecode-propagator-implementation` for custom propagator design, posting, propagation lifecycle, and optimization.
+- Use `gecode-brancher-implementation` for custom branchers, choice/commit mechanics, and no-good literal support.
+- Use `gecode-memory-handling` for space/region/heap allocation strategy and actor state ownership/disposal rules.
+- Use `gecode-search-engines` for selecting and tuning built-in engines (`DFS`/`BAB`/`LDS`/restart/portfolio).
+- Use `gecode-search-engine-implementation` for implementing custom search engines and recomputation strategies.
+
 ## Core
 - Space is home for variables, propagators, branchers, optimization order.
 - Propagation is explicit: call `status()`.
