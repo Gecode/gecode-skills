@@ -24,6 +24,22 @@
     "should_trigger": true
   },
   {
+    "query": "My Gecode search tree exploded after I added a few side constraints. I need a debugging workflow for deciding whether the problem is weak propagation, bad branching, or missing symmetry breaking.",
+    "should_trigger": true
+  },
+  {
+    "query": "I want a cookbook-style answer for modeling a Gecode optimization problem with channeling, a couple of implied constraints, and a clean brancher order. Think recipe, not theory.",
+    "should_trigger": true
+  },
+  {
+    "query": "How should I model this warehouse assignment problem in Gecode if each customer can be assigned to a set of depots and I care about subset and cardinality structure? I think set vars might fit better than raw ints.",
+    "should_trigger": true
+  },
+  {
+    "query": "I'm using Gecode with a mix of discrete choices and continuous tolerances. What should I watch out for when float vars are part of the model, especially compared with ordinary integer branching intuition?",
+    "should_trigger": true
+  },
+  {
     "query": "I need to clean up a generic CMakeLists.txt for a small SDL app. There is no Gecode involved, I just want better target_link_libraries usage and install rules.",
     "should_trigger": false
   },
@@ -45,6 +61,14 @@
   },
   {
     "query": "What are good heuristics for graph coloring in CP, and how do I think about symmetry? Solver-agnostic advice is fine.",
+    "should_trigger": false
+  },
+  {
+    "query": "My game engine is slow and I want advice on profiling frame spikes with Tracy and Instruments. This has nothing to do with constraint programming.",
+    "should_trigger": false
+  },
+  {
+    "query": "I need help modeling a production schedule, but I'm doing it in CP-SAT and mostly want generic scheduling ideas, not Gecode-specific guidance.",
     "should_trigger": false
   }
 ]

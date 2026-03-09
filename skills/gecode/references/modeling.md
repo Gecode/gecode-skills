@@ -1,5 +1,10 @@
 # Gecode Modeling
 
+## Related References
+- Read `modeling-cookbook.md` for recipe-style modeling patterns and concrete construction templates.
+- Read `set-and-float-modeling.md` when the task depends on set vars, float vars, or mixed-domain behavior.
+- Read `scheduling-patterns.md` for cumulative/resource-style models and sequencing-heavy schedules.
+
 ## Core
 - Define the model as a `Space` subclass.
 - Create typed variable arrays with tight domains early.
