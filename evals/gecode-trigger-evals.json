@@ -16,6 +16,10 @@
     "should_trigger": true
   },
   {
+    "query": "I am packaging a C++ solver that depends on Gecode 6.3+ and I want the downstream CMake project to use find_package(Gecode CONFIG) with a FetchContent fallback when it's not installed.",
+    "should_trigger": true
+  },
+  {
     "query": "Please model this scheduling problem in Gecode with strong global constraints, sensible symmetry breaking, and a branching strategy that focuses on the cost-driving variables first.",
     "should_trigger": true
   },
@@ -36,6 +40,10 @@
     "should_trigger": true
   },
   {
+    "query": "I need to clean up a generic CMakeLists.txt for a small SDL app. There is no Gecode involved, I just want better target_link_libraries usage and install rules.",
+    "should_trigger": false
+  },
+  {
     "query": "How would you model a nurse rostering problem in constraint programming? I'm open to any solver or even OR-Tools, I mainly want high-level CP advice.",
     "should_trigger": false
   },
@@ -45,6 +53,10 @@
   },
   {
     "query": "Can you explain branch and bound versus depth-first search in general terms? I don't need implementation details for any particular library.",
+    "should_trigger": false
+  },
+  {
+    "query": "I have an old FindFoo.cmake module and want to migrate to package config usage. The library is our in-house SDK, not Gecode.",
     "should_trigger": false
   },
   {

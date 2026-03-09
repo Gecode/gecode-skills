@@ -32,6 +32,7 @@ The skill routes internally to focused reference documents for:
 - memory management
 - built-in search engines
 - custom search engine implementation
+- downstream CMake consumption
 
 ## Contributing
 

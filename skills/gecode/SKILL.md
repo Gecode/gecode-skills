@@ -1,6 +1,6 @@
 ---
 name: gecode
-description: "Gecode architecture, modeling, cookbook-style modeling patterns, set/float/scheduling guidance, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, and debugging/performance diagnosis. Use for any materially Gecode-specific task: building or refining Gecode models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, diagnosing weak propagation or search pathologies, or reasoning about set/float/resource-style models."
+description: "Gecode architecture, modeling, cookbook-style modeling patterns, set/float/scheduling guidance, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, debugging/performance diagnosis, and downstream CMake consumption. Use for any materially Gecode-specific task: building or refining Gecode models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, diagnosing weak propagation or search pathologies, reasoning about set/float/resource-style models, or integrating Gecode into CMake projects."
 ---
 
 # Gecode
@@ -47,6 +47,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Read `references/memory-handling.md` for space/region/heap allocation, handles, clone footprint, and disposal obligations.
 - Read `references/search-engines.md` for using and tuning built-in engines such as `DFS`, `BAB`, `LDS`, restart, and portfolio search.
 - Read `references/search-engine-implementation.md` for custom engine orchestration, recomputation strategy, LAO, and completeness invariants.
+- Read `references/cmake-consumption.md` for `find_package(Gecode CONFIG)`, target usage, version checks, and vendored fallback patterns.
 - Read `references/general-knowledge.md` only for broad conceptual explanations, tracing/observability guidance, or staged model-improvement workflow discussion that goes beyond the always-on mental model.
 
 ## Operating Rules
@@ -68,3 +69,4 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - `references/memory-handling.md`: memory areas, lazy vs eager allocation, shared/local handles, and `AP_DISPOSE` discipline.
 - `references/search-engines.md`: engine selection, restart/portfolio tradeoffs, no-goods, parallel semantics, and completeness caveats.
 - `references/search-engine-implementation.md`: custom engine state, replay/recomputation, ownership, branch-and-bound integration, and invariants.
+- `references/cmake-consumption.md`: package-config integration, exported targets, component selection, and fetch fallback.
