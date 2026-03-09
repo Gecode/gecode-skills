@@ -1,6 +1,6 @@
 ---
 name: gecode
-description: "Gecode architecture, modeling, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, and downstream CMake consumption. Use for any materially Gecode-specific task: building or refining models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, debugging solver behavior, reasoning about space memory/lifecycle semantics, or integrating Gecode into CMake projects."
+description: "Gecode architecture, modeling, cookbook-style modeling patterns, set/float/scheduling guidance, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, debugging/performance diagnosis, and downstream CMake consumption. Use for any materially Gecode-specific task: building or refining Gecode models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, diagnosing weak propagation or search pathologies, reasoning about set/float/resource-style models, or integrating Gecode into CMake projects."
 ---
 
 # Gecode
@@ -38,6 +38,10 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 
 ## Routing
 - Read `references/modeling.md` for model structure, variables, constraints, branching setup, and built-in search configuration.
+- Read `references/modeling-cookbook.md` when the user needs concrete recipe-style guidance for channeling, symmetry, branching, optimization setup, or choosing globals versus decompositions.
+- Read `references/debugging-workflow.md` for weak propagation, exploding search trees, stale choices, recomputation bugs, memory growth, or tracing/profiling workflow.
+- Read `references/set-and-float-modeling.md` for set-variable modeling, float-specific caveats, or mixed-domain modeling.
+- Read `references/scheduling-patterns.md` for cumulative/resource-style models, sequencing/order constraints, and scheduling-oriented branching or symmetry choices.
 - Read `references/propagator-implementation.md` for custom propagator design, posting, propagation lifecycle, advisors, and rewriting.
 - Read `references/brancher-implementation.md` for custom branchers, choices, commits, archiving, and NGL support.
 - Read `references/memory-handling.md` for space/region/heap allocation, handles, clone footprint, and disposal obligations.
@@ -56,6 +60,10 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 ## Reference Index
 - `references/general-knowledge.md`: advanced observability, staged improvement workflow, and broad conceptual framing beyond the always-on core.
 - `references/modeling.md`: variable selection, globals, reification, symmetry, branching, and search setup in ordinary models.
+- `references/modeling-cookbook.md`: concrete modeling recipes for globals, channeling, symmetry, branching, optimization, and “propagation versus search” decisions.
+- `references/debugging-workflow.md`: symptom-driven diagnosis for weak models, stale choices, recomputation issues, performance pathologies, and observability tooling.
+- `references/set-and-float-modeling.md`: set-variable patterns, float-specific caveats, and mixed-domain modeling reminders.
+- `references/scheduling-patterns.md`: scheduling/resource modeling patterns, sequencing constraints, and search guidance for schedule-like problems.
 - `references/propagator-implementation.md`: actor lifecycle, `ExecStatus`, propagation conditions, iterators, advisors, and rewrite patterns.
 - `references/brancher-implementation.md`: `status`, `choice`, `commit`, archive compatibility, NGLs, and heuristic encoding.
 - `references/memory-handling.md`: memory areas, lazy vs eager allocation, shared/local handles, and `AP_DISPOSE` discipline.
