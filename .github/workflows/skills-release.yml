@@ -1,0 +1,164 @@
+name: skills-release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'scripts/**'
+      - '.release-policy.yml'
+      - '.github/workflows/skills-release.yml'
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Optional explicit version tag (vX.Y.Z)'
+        required: false
+        type: string
+      bump_type:
+        description: 'Semver bump type when no version_override is set'
+        required: false
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - auto
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate skills
+        run: python scripts/validate_skills.py
+
+      - name: Read release policy
+        id: policy
+        run: |
+          python - << 'PY'
+          import re
+          from pathlib import Path
+
+          txt = Path('.release-policy.yml').read_text(encoding='utf-8')
+          m = re.search(r"(?im)^\s*auto_release\s*:\s*(true|false)\s*(?:#.*)?$", txt)
+          auto = bool(m and m.group(1).lower() == 'true')
+          with open(Path.cwd() / '.policy_out', 'w', encoding='utf-8') as f:
+              f.write(f"auto_release={'true' if auto else 'false'}\n")
+          PY
+          cat .policy_out >> "$GITHUB_OUTPUT"
+
+      - name: Decide whether release is allowed
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.policy.outputs.auto_release }}" = "true" ]; then
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stop (policy gate)
+        if: steps.gate.outputs.should_release != 'true'
+        run: echo "Release policy disabled for push events; exiting successfully."
+
+      - name: Determine bump from PR labels
+        if: steps.gate.outputs.should_release == 'true' && github.event_name == 'push'
+        id: prlabels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            let bump = 'patch';
+            try {
+              const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner,
+                repo,
+                commit_sha: context.sha,
+              });
+              if (prs.data && prs.data.length > 0) {
+                const labels = (prs.data[0].labels || []).map(l => l.name);
+                if (labels.includes('release:major')) bump = 'major';
+                else if (labels.includes('release:minor')) bump = 'minor';
+              }
+            } catch (e) {
+              core.warning(`Could not infer PR labels: ${e.message}`);
+            }
+            core.setOutput('bump', bump);
+
+      - name: Compute version
+        if: steps.gate.outputs.should_release == 'true'
+        id: version
+        env:
+          INPUT_BUMP: ${{ github.event.inputs.bump_type }}
+          INPUT_VERSION: ${{ github.event.inputs.version_override }}
+          PUSH_BUMP: ${{ steps.prlabels.outputs.bump }}
+        run: |
+          if [ -n "${INPUT_VERSION:-}" ]; then
+            VERSION="$INPUT_VERSION"
+          else
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              BUMP="${INPUT_BUMP:-patch}"
+            else
+              BUMP="${PUSH_BUMP:-patch}"
+            fi
+            VERSION=$(python scripts/compute_next_version.py --bump "$BUMP")
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check tag does not already exist
+        if: steps.gate.outputs.should_release == 'true'
+        run: |
+          if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.version.outputs.version }} already exists" >&2
+            exit 1
+          fi
+
+      - name: Determine release range
+        if: steps.gate.outputs.should_release == 'true'
+        id: range
+        run: |
+          PREV=$(git tag --list 'v*' --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)
+          if [ -n "$PREV" ]; then
+            FROM="$PREV"
+          else
+            FROM=$(git hash-object -t tree /dev/null)
+          fi
+          echo "from_ref=$FROM" >> "$GITHUB_OUTPUT"
+          echo "to_ref=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes
+        if: steps.gate.outputs.should_release == 'true'
+        run: |
+          python scripts/build_release_notes.py \
+            --from-ref "${{ steps.range.outputs.from_ref }}" \
+            --to-ref "${{ steps.range.outputs.to_ref }}" \
+            --version "${{ steps.version.outputs.version }}" \
+            --repo "${{ github.repository }}" \
+            --output RELEASE_NOTES.md
+
+      - name: Create and push tag
+        if: steps.gate.outputs.should_release == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.version.outputs.version }}" "${GITHUB_SHA}"
+          git push origin "${{ steps.version.outputs.version }}"
+
+      - name: Create GitHub release
+        if: steps.gate.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
