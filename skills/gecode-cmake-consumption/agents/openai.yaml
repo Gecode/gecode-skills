@@ -1,4 +1,0 @@
-interface:
-  display_name: "Gecode CMake Consumption"
-  short_description: "Integrate Gecode via CMake package config"
-  default_prompt: "Guide downstream CMake integration with Gecode package exports, version checks (>= 6.3.0), and migration from custom FindGecode logic."

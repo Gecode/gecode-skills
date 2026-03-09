@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gecode"
+  short_description: "Route any Gecode task to the right internal reference"
+  default_prompt: "Handle this Gecode-specific task by reading only the relevant internal reference files, then provide concise, technically accurate guidance."
