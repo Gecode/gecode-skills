@@ -1,29 +1,43 @@
 # Gecode Skills
 
-Repository infrastructure for publishing Gecode-focused AI agent skills.
+Canonical skill repository for the umbrella Gecode AI agent skill.
 
-This branch sets up validation, CI, and release automation. It does not introduce a published skill yet.
+Install with:
 
-## Infrastructure
+```bash
+npx skills add Gecode/gecode-skills
+```
 
-Included here:
+List available skills:
 
-- GitHub Actions for validation and release publishing
-- semver/version helper scripts
-- release policy gating through `.release-policy.yml`
-- generic skill validation that works before any skill is added
+```bash
+npx skills add Gecode/gecode-skills --list
+```
 
-## Future Skill Layout
+Install a single skill:
 
-Skills will live under:
+```bash
+npx skills add Gecode/gecode-skills --skill gecode
+```
 
-- `skills/<skill-name>/SKILL.md`
+## Available Skill
+
+- `gecode`
+
+The skill routes internally to focused reference documents for:
+- Gecode architecture and runtime semantics
+- modeling and search setup
+- custom propagators
+- custom branchers
+- memory management
+- built-in search engines
+- custom search engine implementation
 
 ## Contributing
 
 ### Skill structure
 
-Each skill must be under:
+The skill must be under:
 
 - `skills/<skill-name>/SKILL.md`
 
@@ -33,7 +47,7 @@ Optional metadata for UIs can be added at:
 
 ### Required frontmatter
 
-Each `SKILL.md` must include YAML frontmatter with:
+`SKILL.md` must include YAML frontmatter with:
 
 - `name`
 - `description`
@@ -48,7 +62,7 @@ Auto-release determines semver bump from PR labels:
 - `release:minor` -> minor bump
 - no label -> patch bump
 
-## Release Policy
+## Release policy
 
 Releases are controlled by `.release-policy.yml`.
 
