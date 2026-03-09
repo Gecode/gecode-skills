@@ -1,0 +1,50 @@
+[
+  {
+    "query": "I'm implementing a cumulative-style constraint in Gecode and the decomposition is too weak. I think I need a custom propagator with better domain filtering. Can you sketch the post/propagate structure and what propagation conditions I should subscribe to?",
+    "should_trigger": true
+  },
+  {
+    "query": "I need a custom Gecode brancher for a packing model where the second alternative should encode a symmetry-breaking exclusion. How should I structure the choice payload and commit logic so recomputation stays safe?",
+    "should_trigger": true
+  },
+  {
+    "query": "My Gecode model solves, but BAB is crawling. Help me decide whether to stay on BAB, switch to restart-based search, or diversify with PBS. I also want to understand the completeness tradeoffs.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you help debug a Gecode issue where a stored choice seems invalid after recomputation? The model uses custom branchers and I suspect I'm breaking clone or commit invariants.",
+    "should_trigger": true
+  },
+  {
+    "query": "I am packaging a C++ solver that depends on Gecode 6.3+ and I want the downstream CMake project to use find_package(Gecode CONFIG) with a FetchContent fallback when it's not installed.",
+    "should_trigger": true
+  },
+  {
+    "query": "Please model this scheduling problem in Gecode with strong global constraints, sensible symmetry breaking, and a branching strategy that focuses on the cost-driving variables first.",
+    "should_trigger": true
+  },
+  {
+    "query": "I need to clean up a generic CMakeLists.txt for a small SDL app. There is no Gecode involved, I just want better target_link_libraries usage and install rules.",
+    "should_trigger": false
+  },
+  {
+    "query": "How would you model a nurse rostering problem in constraint programming? I'm open to any solver or even OR-Tools, I mainly want high-level CP advice.",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm debugging a C++ memory leak around std::shared_ptr and custom allocators. This is ordinary application code, not a solver, and I'm not using Gecode.",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you explain branch and bound versus depth-first search in general terms? I don't need implementation details for any particular library.",
+    "should_trigger": false
+  },
+  {
+    "query": "I have an old FindFoo.cmake module and want to migrate to package config usage. The library is our in-house SDK, not Gecode.",
+    "should_trigger": false
+  },
+  {
+    "query": "What are good heuristics for graph coloring in CP, and how do I think about symmetry? Solver-agnostic advice is fine.",
+    "should_trigger": false
+  }
+]

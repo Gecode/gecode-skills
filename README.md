@@ -1,6 +1,6 @@
 # Gecode Skills
 
-Canonical skill repository for Gecode-focused AI agent skills.
+Canonical skill repository for the umbrella Gecode AI agent skill.
 
 Install with:
 
@@ -17,25 +17,28 @@ npx skills add Gecode/gecode-skills --list
 Install a single skill:
 
 ```bash
-npx skills add Gecode/gecode-skills --skill gecode-modeling
+npx skills add Gecode/gecode-skills --skill gecode
 ```
 
-## Available Skills
+## Available Skill
 
-- `gecode-general-knowledge`
-- `gecode-cmake-consumption`
-- `gecode-modeling`
-- `gecode-propagator-implementation`
-- `gecode-brancher-implementation`
-- `gecode-memory-handling`
-- `gecode-search-engines`
-- `gecode-search-engine-implementation`
+- `gecode`
+
+The skill routes internally to focused reference documents for:
+- Gecode architecture and runtime semantics
+- modeling and search setup
+- custom propagators
+- custom branchers
+- memory management
+- built-in search engines
+- custom search engine implementation
+- downstream CMake consumption
 
 ## Contributing
 
 ### Skill structure
 
-Each skill must be under:
+The skill must be under:
 
 - `skills/<skill-name>/SKILL.md`
 
@@ -45,7 +48,7 @@ Optional metadata for UIs can be added at:
 
 ### Required frontmatter
 
-Each `SKILL.md` must include YAML frontmatter with:
+`SKILL.md` must include YAML frontmatter with:
 
 - `name`
 - `description`
