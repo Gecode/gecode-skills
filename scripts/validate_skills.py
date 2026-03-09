@@ -7,6 +7,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = REPO_ROOT / "skills"
+EXPECTED_SKILLS = {"gecode"}
 
 
 def parse_frontmatter(skill_md: Path) -> dict[str, str]:
@@ -48,11 +49,15 @@ def main() -> int:
     errors: list[str] = []
     seen_names: dict[str, Path] = {}
 
-    skill_dirs = sorted(
-        p for p in SKILLS_DIR.iterdir() if p.is_dir() and p.name.startswith("gecode-")
-    )
-    if not skill_dirs:
-        errors.append("no gecode-* skill directories found under skills/")
+    skill_dirs = sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir())
+    actual_names = {p.name for p in skill_dirs}
+    missing = sorted(EXPECTED_SKILLS - actual_names)
+    unexpected = sorted(actual_names - EXPECTED_SKILLS)
+
+    if missing:
+        errors.append(f"missing expected skills: {', '.join(missing)}")
+    if unexpected:
+        errors.append(f"unexpected skill directories: {', '.join(unexpected)}")
 
     for skill_dir in skill_dirs:
         skill_md = skill_dir / "SKILL.md"
@@ -94,7 +99,7 @@ def main() -> int:
             print(f"- {e}")
         return 1
 
-    print(f"Validated {len(skill_dirs)} skills successfully.")
+    print(f"Validated {len(skill_dirs)} skill successfully.")
     return 0
 
 
