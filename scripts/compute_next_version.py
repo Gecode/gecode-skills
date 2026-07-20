@@ -6,7 +6,7 @@ import re
 import subprocess
 import sys
 
-TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
+TAG_RE = re.compile(r"^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
 
 def validate_version_tag(value: str) -> str:

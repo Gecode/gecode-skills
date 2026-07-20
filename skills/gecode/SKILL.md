@@ -18,7 +18,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Clone only stable, non-failed spaces.
 - Branchers run in posting order.
 - Recomputation can be nondeterministic with weakly monotonic propagation while remaining sound and complete.
-- Model as `class M : public Space`, implement copy constructor and virtual `copy()`, and update variable arrays with `x.update(home, s.x)` during cloning.
+- Model as `class M : public Space`, implement a copy constructor and virtual `copy()`, and update variable arrays with `x.update(*this, s.x)` in the model copy constructor; reserve `home` for actor `copy(Space& home)` APIs.
 - After `status()==SS_BRANCH`, compute `choice()` immediately.
 - Treat returned solutions as owned `Space` objects and delete seed models, choices, and solution spaces explicitly.
 - Do not assume posting performs full propagation.
