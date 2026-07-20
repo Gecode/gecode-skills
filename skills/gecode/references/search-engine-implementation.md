@@ -17,6 +17,7 @@
 - Integrate branch-and-bound by constraining future spaces against the current best solution.
 - Keep restart and meta-engine hooks explicit, such as `master` and `slave`, when required.
 - Wire statistics and stop-object checks consistently.
+- In current main, stop objects and no-good state are copyable and parallel search uses atomic stop coordination plus completion handshakes; do not share mutable stop state non-atomically or destroy PBS workers before their completion signal.
 
 ## Pitfalls
 - Reusing stale choices after another `choice()` call.

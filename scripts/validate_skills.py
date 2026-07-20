@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = REPO_ROOT / "skills"
+EVALS_DIR = REPO_ROOT / "evals"
 EXPECTED_SKILLS = {"gecode"}
+REFERENCE_RE = re.compile(r"`references/([^`]+)`")
+FRONTMATTER_FIELDS = {"name", "description"}
+INTERFACE_FIELDS = {"display_name", "short_description", "default_prompt"}
 
 
 def parse_frontmatter(skill_md: Path) -> dict[str, str]:
@@ -39,6 +44,46 @@ def parse_frontmatter(skill_md: Path) -> dict[str, str]:
             raw_val = raw_val[1:-1]
         fm[key] = raw_val
     return fm
+
+
+def validate_trigger_evals(skill_name: str, errors: list[str]) -> None:
+    eval_path = EVALS_DIR / f"{skill_name}-trigger-evals.json"
+    if not eval_path.is_file():
+        errors.append(f"{skill_name}: missing trigger evals: {eval_path}")
+        return
+
+    try:
+        cases = json.loads(eval_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as error:
+        errors.append(f"{eval_path}: invalid JSON: {error}")
+        return
+
+    if not isinstance(cases, list) or not cases:
+        errors.append(f"{eval_path}: expected a non-empty JSON array")
+        return
+
+    seen_queries: set[str] = set()
+    outcomes: set[bool] = set()
+    for index, case in enumerate(cases):
+        location = f"{eval_path}[{index}]"
+        if not isinstance(case, dict):
+            errors.append(f"{location}: expected an object")
+            continue
+        query = case.get("query")
+        should_trigger = case.get("should_trigger")
+        if not isinstance(query, str) or not query.strip():
+            errors.append(f"{location}: query must be a non-empty string")
+        elif query in seen_queries:
+            errors.append(f"{location}: duplicate query")
+        else:
+            seen_queries.add(query)
+        if not isinstance(should_trigger, bool):
+            errors.append(f"{location}: should_trigger must be a boolean")
+        else:
+            outcomes.add(should_trigger)
+
+    if outcomes != {False, True}:
+        errors.append(f"{eval_path}: include both triggering and non-triggering cases")
 
 
 def main() -> int:
@@ -75,6 +120,33 @@ def main() -> int:
             if req not in fm or not fm[req].strip():
                 errors.append(f"{skill_md}: missing required frontmatter field '{req}'")
 
+        unexpected_fields = sorted(set(fm) - FRONTMATTER_FIELDS)
+        if unexpected_fields:
+            errors.append(
+                f"{skill_md}: unsupported frontmatter fields: {', '.join(unexpected_fields)}"
+            )
+
+        referenced_files = set(
+            REFERENCE_RE.findall(skill_md.read_text(encoding="utf-8"))
+        )
+        for reference in sorted(referenced_files):
+            reference_path = skill_dir / "references" / reference
+            if not reference_path.is_file():
+                errors.append(f"{skill_md}: referenced file does not exist: {reference_path}")
+
+        references_dir = skill_dir / "references"
+        actual_references = (
+            {path.name for path in references_dir.glob("*.md")}
+            if references_dir.is_dir()
+            else set()
+        )
+        orphaned_references = sorted(actual_references - referenced_files)
+        if orphaned_references:
+            errors.append(
+                f"{skill_md}: references not routed from SKILL.md: "
+                f"{', '.join(orphaned_references)}"
+            )
+
         name = fm.get("name", "")
         if name and name != skill_dir.name:
             errors.append(
@@ -90,8 +162,17 @@ def main() -> int:
                 seen_names[name] = skill_md
 
         agents_dir = skill_dir / "agents"
-        if agents_dir.exists() and not (agents_dir / "openai.yaml").exists():
-            errors.append(f"{skill_dir}: agents/ exists but agents/openai.yaml is missing")
+        if agents_dir.exists():
+            openai_yaml = agents_dir / "openai.yaml"
+            if not openai_yaml.is_file():
+                errors.append(f"{skill_dir}: agents/ exists but agents/openai.yaml is missing")
+            else:
+                metadata = openai_yaml.read_text(encoding="utf-8")
+                for field in sorted(INTERFACE_FIELDS):
+                    if not re.search(rf"(?m)^\s{{2}}{field}:\s*\S", metadata):
+                        errors.append(f"{openai_yaml}: missing interface field '{field}'")
+
+        validate_trigger_evals(skill_dir.name, errors)
 
     if errors:
         print("Skill validation failed:")

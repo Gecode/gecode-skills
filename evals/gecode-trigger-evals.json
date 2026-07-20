@@ -16,7 +16,7 @@
     "should_trigger": true
   },
   {
-    "query": "I am packaging a C++ solver that depends on Gecode 6.3+ and I want the downstream CMake project to use find_package(Gecode CONFIG) with a FetchContent fallback when it's not installed.",
+    "query": "I am packaging a C++ solver that targets current Gecode main (6.4+) and I want the downstream CMake project to use find_package(Gecode CONFIG) with a FetchContent fallback when it's not installed.",
     "should_trigger": true
   },
   {

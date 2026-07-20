@@ -28,6 +28,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: skills-release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -38,9 +42,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Validate skills
         run: python scripts/validate_skills.py
+
+      - name: Run repository tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Smoke discovery
+        run: npx --yes skills add . --list
 
       - name: Read release policy
         id: policy
@@ -105,7 +118,7 @@ jobs:
           PUSH_BUMP: ${{ steps.prlabels.outputs.bump }}
         run: |
           if [ -n "${INPUT_VERSION:-}" ]; then
-            VERSION="$INPUT_VERSION"
+            VERSION=$(python scripts/compute_next_version.py --validate "$INPUT_VERSION")
           else
             if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
               BUMP="${INPUT_BUMP:-patch}"
@@ -119,7 +132,7 @@ jobs:
       - name: Check tag does not already exist
         if: steps.gate.outputs.should_release == 'true'
         run: |
-          if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+          if git show-ref --verify --quiet "refs/tags/${{ steps.version.outputs.version }}"; then
             echo "Tag ${{ steps.version.outputs.version }} already exists" >&2
             exit 1
           fi

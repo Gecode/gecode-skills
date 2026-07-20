@@ -23,6 +23,11 @@
 - For brancher choices using heap buffers, pair allocation and free, and register `AP_DISPOSE`.
 - Use `Region` for per-choice scratch arrays to avoid heap churn.
 
+## Exception Safety and Fault Injection
+- Treat allocation, actor-copy, `AP_DISPOSE` registration, and partial-clone failures as normal exception paths.
+- Make custom `copy()` and `dispose()` logic leave both the source and partially constructed clone recoverable when an allocation throws.
+- Current Gecode main provides the CMake-only `GECODE_ENABLE_FAULT_INJECTION` option and an isolated single-threaded `check-fault` suite; use it to exercise ownership and clone-recovery paths rather than relying only on successful allocations.
+
 ## Pitfalls
 - Frequent resize in space memory causing fragmentation.
 - Forgetting `home.notice(..., AP_DISPOSE)` for external or heap resources.

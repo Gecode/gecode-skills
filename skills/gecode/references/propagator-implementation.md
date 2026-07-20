@@ -4,7 +4,7 @@
 - Propagators compute on views, not model variables.
 - Implement a post function and the actor lifecycle: `copy`, `dispose`, `cost`, `reschedule`, and `propagate`.
 - Use `Home` for posting context and use fail/check macros.
-- Return honest `ExecStatus`: `ES_FAILED`, `ES_SUBSUMED`, `ES_FIX`, or `ES_NOFIX`.
+- Return honest `ExecStatus`: `ES_FAILED`, `ES_FIX`, or `ES_NOFIX`; when a propagator is subsumed, return `home.ES_SUBSUMED(*this)` (or `home.ES_SUBSUMED_DISPOSED(...)` when the disposal size is part of the return). Never use the internal `ES_SUBSUMED_` enum value directly.
 - Respect obligations around correctness, checking, contracting, monotonicity or waived monotonicity, subscription completeness, and update completeness.
 - Respect implementation obligations: subsumption complete, cloning conservative, and subscription correct.
 - Use standard patterns such as `Unary`, `Binary`, `Ternary`, `Nary`, or mixed variants to reduce boilerplate.
