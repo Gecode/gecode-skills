@@ -1,0 +1,12 @@
+# Local skill-installer outputs
+.agents/
+.claude/
+.junie/
+.kiro/
+.windsurf/
+skills-lock.json
+
+# Python test/cache outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/

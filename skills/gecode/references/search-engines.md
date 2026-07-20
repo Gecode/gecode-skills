@@ -16,7 +16,19 @@
 - In restart search, let `master()` decide restart behavior and optional no-good posting.
 - In restart search, let `slave()` signal completeness intentionally: `true` for complete slave search, `false` for deliberate incompleteness such as LNS neighborhoods.
 - In portfolio search, remember `slave()` return value has no meaning.
-- For restart-based best-solution assets in portfolios, use `RBS<Script,BAB>`.
+- For restart-based best-solution assets in portfolios, add the restart builder to `SEBs`; `RBS<Script,BAB>` names the engine type, while `rbs<Script,BAB>(options)` creates the portfolio asset builder. For example:
+  ```cpp
+  Search::Options asset_options;
+  asset_options.cutoff = Search::Cutoff::constant(1000000);
+  SEBs assets(3);
+  assets[0] = bab<Script>(asset_options);
+  assets[1] = bab<Script>(asset_options);
+  assets[2] = rbs<Script, BAB>(asset_options);
+
+  Search::Options portfolio_options;
+  portfolio_options.threads = 2;
+  PBS<Script, BAB> pbs(script, assets, portfolio_options);
+  ```
 - Diversify assets intentionally; identical assets rarely justify portfolio overhead.
 
 ## Pitfalls

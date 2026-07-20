@@ -2,6 +2,8 @@
 
 Canonical skill repository for the umbrella Gecode AI agent skill.
 
+[Gecode](https://www.gecode.org/) 6.4.0 is the current knowledge and compatibility baseline. Repository releases use an independent semantic version because the skill can evolve between Gecode releases.
+
 Install with:
 
 ```bash
@@ -34,7 +36,30 @@ The skill routes internally to focused reference documents for:
 - custom search engine implementation
 - downstream CMake consumption
 
+## Versioning and distribution
+
+- GitHub releases are immutable snapshots of this repository, starting with `v1.0.0`.
+- The standard `npx skills add Gecode/gecode-skills` command installs from the public repository's default branch.
+- A new Gecode release normally causes a minor skill release when it adds or changes substantial guidance; corrections and refinements are patch releases.
+- Major releases are reserved for incompatible skill structure or behavior changes.
+- skills.sh discovers the public skill automatically after an installation through the `skills` CLI; there is no separate package upload.
+
 ## Contributing
+
+### Verification
+
+Run the structural validator and repository regression tests locally:
+
+```bash
+python scripts/validate_skills.py
+python -m unittest discover -s tests -v
+```
+
+The CI smoke test also checks that the skill is discoverable by the skills CLI:
+
+```bash
+npx --yes skills add . --list
+```
 
 ### Skill structure
 

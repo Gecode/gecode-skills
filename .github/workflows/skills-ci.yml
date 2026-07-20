@@ -5,11 +5,17 @@ on:
     paths:
       - 'skills/**'
       - 'scripts/**'
+      - 'tests/**'
+      - 'evals/**'
+      - '.release-policy.yml'
       - '.github/workflows/skills-*.yml'
   pull_request:
     paths:
       - 'skills/**'
       - 'scripts/**'
+      - 'tests/**'
+      - 'evals/**'
+      - '.release-policy.yml'
       - '.github/workflows/skills-*.yml'
 
 jobs:
@@ -25,5 +31,7 @@ jobs:
           node-version: '20'
       - name: Validate skills
         run: python scripts/validate_skills.py
+      - name: Run repository tests
+        run: python -m unittest discover -s tests -v
       - name: Smoke discovery
         run: npx --yes skills add . --list

@@ -9,6 +9,13 @@ import sys
 TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 
 
+def validate_version_tag(value: str) -> str:
+    value = value.strip()
+    if not TAG_RE.fullmatch(value):
+        raise ValueError("version must be in form vX.Y.Z")
+    return value
+
+
 def latest_tag() -> tuple[int, int, int]:
     out = subprocess.check_output(
         ["git", "tag", "--list", "v*", "--sort=-v:refname"], text=True
@@ -36,13 +43,25 @@ def main() -> int:
     ap.add_argument("--bump", choices=["major", "minor", "patch", "auto"], default="auto")
     ap.add_argument("--labels", default="")
     ap.add_argument("--current", default="")
+    ap.add_argument("--validate", default="", metavar="VERSION")
     args = ap.parse_args()
 
-    if args.current:
-        m = TAG_RE.match(args.current.strip())
-        if not m:
-            print("ERROR: --current must be in form vX.Y.Z", file=sys.stderr)
+    if args.validate:
+        try:
+            print(validate_version_tag(args.validate))
+        except ValueError as error:
+            print(f"ERROR: {error}", file=sys.stderr)
             return 1
+        return 0
+
+    if args.current:
+        try:
+            current = validate_version_tag(args.current)
+        except ValueError as error:
+            print(f"ERROR: --current {error}", file=sys.stderr)
+            return 1
+        m = TAG_RE.fullmatch(current)
+        assert m is not None
         cur = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
     else:
         cur = latest_tag()

@@ -6,12 +6,14 @@ import subprocess
 from pathlib import Path
 
 
-def changed_skills(diff_range: str) -> list[str]:
-    out = subprocess.check_output(["git", "diff", "--name-only", diff_range], text=True)
+def changed_skills(diff_range: str, cwd: Path | None = None) -> list[str]:
+    out = subprocess.check_output(
+        ["git", "diff", "--name-only", diff_range], text=True, cwd=cwd
+    )
     names: set[str] = set()
     for line in out.splitlines():
         parts = line.split("/")
-        if len(parts) >= 3 and parts[0] == "skills" and parts[1].startswith("gecode-"):
+        if len(parts) >= 3 and parts[0] == "skills" and parts[1]:
             names.add(parts[1])
     return sorted(names)
 

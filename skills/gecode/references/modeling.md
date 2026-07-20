@@ -30,6 +30,7 @@
 - Use branch filters and print functions for targeted branching and observability.
 - When executing code between branchers, remember propagation is still explicit on recomputation paths.
 - For optimization models, branch on cost-driving variables first and tie-break with objective structure.
+- Current main optionally exposes counting-based search branching through `cbsbranch(...)` when built with `GECODE_ENABLE_CBS`; treat it as an optional, model-dependent alternative to generic branching.
 
 ## Pitfalls
 - Weak domains at model start causing huge trees.

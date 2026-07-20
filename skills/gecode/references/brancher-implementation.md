@@ -14,7 +14,7 @@
 - Track the first candidate index such as `start` to avoid rescanning.
 - Keep the choice payload minimal, for example `pos`, `val`, and alternative count, and archive it deterministically.
 - Use binary alternatives such as `eq` versus `nq` unless an assignment brancher genuinely needs a single alternative.
-- Implement an NGL class with `status`, `prune`, `subscribe`, `cancel`, and `reschedule`.
+- Implement an NGL class with `status`, `prune`, `subscribe`, `cancel`, `reschedule`, and `copy`; add `notice` and disposal handling when the literal owns resources.
 - For complementary last alternatives, `ngl()` can return `NULL` when that is semantically valid.
 - Reuse branchers through views, notably minus views for max-style variants.
 - Encode the problem heuristic explicitly, such as Warnsdorff or best-fit slack.
