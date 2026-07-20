@@ -45,7 +45,15 @@ class VersionTests(unittest.TestCase):
         self.assertEqual(validate_version_tag("v1.0.0"), "v1.0.0")
 
     def test_release_version_rejects_non_semver_and_output_injection(self) -> None:
-        invalid_versions = ("6.4.0", "v1.0", "v1.0.0-rc.1", "v1.0.0\nunsafe=true")
+        invalid_versions = (
+            "6.4.0",
+            "v1.0",
+            "v1.0.0-rc.1",
+            "v01.2.3",
+            "v1.02.3",
+            "v1.2.03",
+            "v1.0.0\nunsafe=true",
+        )
         for version in invalid_versions:
             with self.subTest(version=version):
                 with self.assertRaises(ValueError):
@@ -85,6 +93,39 @@ class SkillGuidanceTests(unittest.TestCase):
         self.assertIn("6.4.0", guidance)
         self.assertIn("C++17", guidance)
         self.assertIn("GECODE_INSTALL=OFF", guidance)
+
+    def test_model_copy_guidance_uses_the_model_space(self) -> None:
+        guidance = (REPO_ROOT / "skills" / "gecode" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("x.update(*this, s.x)", guidance)
+        self.assertNotIn("x.update(home, s.x)", guidance)
+
+
+class WorkflowTests(unittest.TestCase):
+    def read_workflow(self, name: str) -> str:
+        return (REPO_ROOT / ".github" / "workflows" / name).read_text(
+            encoding="utf-8"
+        )
+
+    def test_skills_cli_is_pinned_in_ci_and_release(self) -> None:
+        for workflow_name in ("skills-ci.yml", "skills-release.yml"):
+            with self.subTest(workflow=workflow_name):
+                workflow = self.read_workflow(workflow_name)
+                self.assertIn("npx --yes skills@1.5.19 add . --list", workflow)
+                self.assertNotIn("npx --yes skills add . --list", workflow)
+
+    def test_release_verification_is_read_only_and_release_can_read_prs(self) -> None:
+        workflow = self.read_workflow("skills-release.yml")
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertIn("persist-credentials: false", workflow)
+        self.assertIn("release:\n    needs: verify", workflow)
+        self.assertIn("contents: write\n      pull-requests: read", workflow)
+
+    def test_ci_discovery_is_read_only(self) -> None:
+        workflow = self.read_workflow("skills-ci.yml")
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertIn("persist-credentials: false", workflow)
 
 
 if __name__ == "__main__":

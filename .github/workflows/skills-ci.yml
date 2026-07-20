@@ -18,11 +18,16 @@ on:
       - '.release-policy.yml'
       - '.github/workflows/skills-*.yml'
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -34,4 +39,4 @@ jobs:
       - name: Run repository tests
         run: python -m unittest discover -s tests -v
       - name: Smoke discovery
-        run: npx --yes skills add . --list
+        run: npx --yes skills@1.5.19 add . --list
