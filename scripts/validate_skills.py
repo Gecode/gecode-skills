@@ -9,8 +9,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = REPO_ROOT / "skills"
 EVALS_DIR = REPO_ROOT / "evals"
-EXPECTED_SKILLS = {"gecode"}
-REFERENCE_RE = re.compile(r"`references/([^`]+)`")
+MARKDOWN_REFERENCE_RE = re.compile(
+    r"`([^`\n]+\.md(?:#[^`\n]+)?)`|"
+    r"\[[^\]\n]*\]\(([^)\s]+\.md(?:#[^)\s]+)?)\)"
+)
 FRONTMATTER_FIELDS = {"name", "description"}
 INTERFACE_FIELDS = {"display_name", "short_description", "default_prompt"}
 
@@ -86,6 +88,55 @@ def validate_trigger_evals(skill_name: str, errors: list[str]) -> None:
         errors.append(f"{eval_path}: include both triggering and non-triggering cases")
 
 
+def markdown_references(source: Path) -> set[str]:
+    references = set()
+    for match in MARKDOWN_REFERENCE_RE.finditer(source.read_text(encoding="utf-8")):
+        reference = match.group(1) or match.group(2)
+        references.add(reference.split("#", 1)[0])
+    return references
+
+
+def validate_reference_graph(skill_dir: Path) -> list[str]:
+    skill_dir = skill_dir.resolve()
+    skill_md = skill_dir / "SKILL.md"
+    markdown_files = {path.resolve() for path in skill_dir.rglob("*.md")}
+    graph: dict[Path, set[Path]] = {path: set() for path in markdown_files}
+    errors: list[str] = []
+
+    for source in markdown_files:
+        for reference in markdown_references(source):
+            target = (source.parent / reference).resolve()
+            try:
+                target.relative_to(skill_dir)
+            except ValueError:
+                errors.append(f"{source}: Markdown reference escapes skill: {reference}")
+                continue
+            if not target.is_file():
+                errors.append(f"{source}: referenced Markdown file does not exist: {reference}")
+                continue
+            graph[source].add(target)
+
+    reachable: set[Path] = set()
+    pending = [skill_md]
+    while pending:
+        source = pending.pop()
+        if source in reachable:
+            continue
+        reachable.add(source)
+        pending.extend(graph.get(source, ()))
+
+    references_dir = skill_dir / "references"
+    reference_files = (
+        {path.resolve() for path in references_dir.rglob("*.md")}
+        if references_dir.is_dir()
+        else set()
+    )
+    for orphan in sorted(reference_files - reachable):
+        errors.append(f"{orphan}: reference is not reachable from {skill_md}")
+
+    return errors
+
+
 def main() -> int:
     if not SKILLS_DIR.exists():
         print(f"ERROR: skills directory not found: {SKILLS_DIR}")
@@ -95,14 +146,8 @@ def main() -> int:
     seen_names: dict[str, Path] = {}
 
     skill_dirs = sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir())
-    actual_names = {p.name for p in skill_dirs}
-    missing = sorted(EXPECTED_SKILLS - actual_names)
-    unexpected = sorted(actual_names - EXPECTED_SKILLS)
-
-    if missing:
-        errors.append(f"missing expected skills: {', '.join(missing)}")
-    if unexpected:
-        errors.append(f"unexpected skill directories: {', '.join(unexpected)}")
+    if not skill_dirs:
+        errors.append("no skills found")
 
     for skill_dir in skill_dirs:
         skill_md = skill_dir / "SKILL.md"
@@ -126,26 +171,7 @@ def main() -> int:
                 f"{skill_md}: unsupported frontmatter fields: {', '.join(unexpected_fields)}"
             )
 
-        referenced_files = set(
-            REFERENCE_RE.findall(skill_md.read_text(encoding="utf-8"))
-        )
-        for reference in sorted(referenced_files):
-            reference_path = skill_dir / "references" / reference
-            if not reference_path.is_file():
-                errors.append(f"{skill_md}: referenced file does not exist: {reference_path}")
-
-        references_dir = skill_dir / "references"
-        actual_references = (
-            {path.name for path in references_dir.glob("*.md")}
-            if references_dir.is_dir()
-            else set()
-        )
-        orphaned_references = sorted(actual_references - referenced_files)
-        if orphaned_references:
-            errors.append(
-                f"{skill_md}: references not routed from SKILL.md: "
-                f"{', '.join(orphaned_references)}"
-            )
+        errors.extend(validate_reference_graph(skill_dir))
 
         name = fm.get("name", "")
         if name and name != skill_dir.name:
