@@ -7,7 +7,12 @@ description: "Gecode architecture, modeling, cookbook-style modeling patterns, s
 
 Use this skill as the entry point for any Gecode-specific task. Carry the universal Gecode runtime model in mind for every response, then load only the additional reference files needed for the task.
 
+## Constraint Programming in One Paragraph
+
+Constraint programming represents each variable by a domain of still-possible values and repeatedly propagates constraints until no propagator can remove anything else or a domain becomes empty. Domain states form a lattice ordered by information (smaller domains contain more information). Treat a propagator as a contracting, weakly monotonic function on that lattice: it can remove values but cannot restore them. Consequently, correctness must never depend on propagator execution or posting order; fair propagation computes a sound stable state regardless of scheduling. Scheduling can affect performance and, with weakly monotonic propagators, the exact propagation trace or strength reached during recomputation, but not soundness or search completeness.
+
 ## Always-On Mental Model
+
 - Space is the home for variables, propagators, branchers, and optimization order.
 - Propagation is explicit: call `status()`.
 - Search primitives are `status()`, `choice()`, `clone()`, `commit()`, and `constrain()`.
@@ -17,6 +22,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - `choice()` invalidates previous choices for later `commit()` on that space.
 - Clone only stable, non-failed spaces.
 - Branchers run in posting order.
+- Propagators do not have a correctness-significant order; never encode or test a constraint by relying on one propagator running before another.
 - Recomputation can be nondeterministic with weakly monotonic propagation while remaining sound and complete.
 - Model as `class M : public Space`, implement a copy constructor and virtual `copy()`, and update variable arrays with `x.update(*this, s.x)` in the model copy constructor; reserve `home` for actor `copy(Space& home)` APIs.
 - After `status()==SS_BRANCH`, compute `choice()` immediately.
@@ -24,8 +30,10 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Do not assume posting performs full propagation.
 - Do not call the `Space` copy constructor directly instead of `clone()`.
 - Do not reuse stale choices after another `choice()` call.
+- Test new propagators primarily through Gecode's existing test infrastructure, which already exercises randomized pruning, intermittent fixpoints, cloning, disable/enable cycles, posting timing, reification, and subsumption.
 
 ## Default Gecode Heuristics
+
 - Tighten variable domains as early as possible.
 - Prefer global constraints over weak manual decompositions.
 - Keep branching explicit and problem-specific rather than relying on generic defaults.
@@ -37,6 +45,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Use explicit disposal discipline for external or heap-backed resources.
 
 ## Routing
+
 - Read `references/modeling.md` for model structure, variables, constraints, branching setup, and built-in search configuration.
 - Read `references/modeling-cookbook.md` when the user needs concrete recipe-style guidance for channeling, symmetry, branching, optimization setup, or choosing globals versus decompositions.
 - Read `references/debugging-workflow.md` for weak propagation, exploding search trees, stale choices, recomputation bugs, memory growth, or tracing/profiling workflow.
@@ -51,6 +60,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Read `references/general-knowledge.md` only for broad conceptual explanations, tracing/observability guidance, or staged model-improvement workflow discussion that goes beyond the always-on mental model.
 
 ## Operating Rules
+
 - Read only the reference file or files needed for the current task.
 - Combine references only when the task genuinely crosses boundaries, such as a custom propagator with nontrivial memory strategy or a search-engine bug tied to choice compatibility.
 - Prefer the narrowest useful reference set first, then expand if the user asks for adjacent concerns.
@@ -58,6 +68,7 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Use this `SKILL.md` alone for broad explanations, initial modeling guidance, and many runtime/debugging answers before reaching for extra references.
 
 ## Reference Index
+
 - `references/general-knowledge.md`: advanced observability, staged improvement workflow, and broad conceptual framing beyond the always-on core.
 - `references/modeling.md`: variable selection, globals, reification, symmetry, branching, and search setup in ordinary models.
 - `references/modeling-cookbook.md`: concrete modeling recipes for globals, channeling, symmetry, branching, optimization, and “propagation versus search” decisions.
