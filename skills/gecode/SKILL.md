@@ -36,37 +36,25 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 - Remember that clone footprint matters when designing actor state and cached data.
 - Use explicit disposal discipline for external or heap-backed resources.
 
-## Routing
-- Read `references/modeling.md` for model structure, variables, constraints, branching setup, and built-in search configuration.
-- Read `references/modeling-cookbook.md` when the user needs concrete recipe-style guidance for channeling, symmetry, branching, optimization setup, or choosing globals versus decompositions.
-- Read `references/debugging-workflow.md` for weak propagation, exploding search trees, stale choices, recomputation bugs, memory growth, or tracing/profiling workflow.
-- Read `references/set-and-float-modeling.md` for set-variable modeling, float-specific caveats, or mixed-domain modeling.
-- Read `references/scheduling-patterns.md` for cumulative/resource-style models, sequencing/order constraints, and scheduling-oriented branching or symmetry choices.
-- Read `references/propagator-implementation.md` for custom propagator design, posting, propagation lifecycle, advisors, and rewriting.
-- Read `references/brancher-implementation.md` for custom branchers, choices, commits, archiving, and NGL support.
-- Read `references/memory-handling.md` for space/region/heap allocation, handles, clone footprint, and disposal obligations.
-- Read `references/search-engines.md` for using and tuning built-in engines such as `DFS`, `BAB`, `LDS`, restart, and portfolio search.
-- Read `references/search-engine-implementation.md` for custom engine orchestration, recomputation strategy, LAO, and completeness invariants.
-- Read `references/cmake-consumption.md` for `find_package(Gecode CONFIG)`, target usage, version checks, and vendored fallback patterns.
-- Read `references/general-knowledge.md` only for broad conceptual explanations, tracing/observability guidance, or staged model-improvement workflow discussion that goes beyond the always-on mental model.
+## Load References
 
-## Operating Rules
 - Read only the reference file or files needed for the current task.
 - Combine references only when the task genuinely crosses boundaries, such as a custom propagator with nontrivial memory strategy or a search-engine bug tied to choice compatibility.
 - Prefer the narrowest useful reference set first, then expand if the user asks for adjacent concerns.
 - Keep answers Gecode-specific. If the request is generic CMake, generic C++ memory, or generic CP theory without a real Gecode angle, do not over-apply this skill.
 - Use this `SKILL.md` alone for broad explanations, initial modeling guidance, and many runtime/debugging answers before reaching for extra references.
 
-## Reference Index
-- `references/general-knowledge.md`: advanced observability, staged improvement workflow, and broad conceptual framing beyond the always-on core.
-- `references/modeling.md`: variable selection, globals, reification, symmetry, branching, and search setup in ordinary models.
-- `references/modeling-cookbook.md`: concrete modeling recipes for globals, channeling, symmetry, branching, optimization, and “propagation versus search” decisions.
-- `references/debugging-workflow.md`: symptom-driven diagnosis for weak models, stale choices, recomputation issues, performance pathologies, and observability tooling.
-- `references/set-and-float-modeling.md`: set-variable patterns, float-specific caveats, and mixed-domain modeling reminders.
-- `references/scheduling-patterns.md`: scheduling/resource modeling patterns, sequencing constraints, and search guidance for schedule-like problems.
-- `references/propagator-implementation.md`: actor lifecycle, `ExecStatus`, propagation conditions, iterators, advisors, and rewrite patterns.
-- `references/brancher-implementation.md`: `status`, `choice`, `commit`, archive compatibility, NGLs, and heuristic encoding.
-- `references/memory-handling.md`: memory areas, lazy vs eager allocation, shared/local handles, and `AP_DISPOSE` discipline.
-- `references/search-engines.md`: engine selection, restart/portfolio tradeoffs, no-goods, parallel semantics, and completeness caveats.
-- `references/search-engine-implementation.md`: custom engine state, replay/recomputation, ownership, branch-and-bound integration, and invariants.
-- `references/cmake-consumption.md`: package-config integration, exported targets, component selection, and fetch fallback.
+| Read | When the task involves |
+| --- | --- |
+| `references/modeling.md` | Model structure, variables, constraints, branching setup, or built-in search configuration |
+| `references/modeling-cookbook.md` | Recipe-style guidance for globals versus decompositions, channeling, symmetry, branching, or optimization setup |
+| `references/debugging-workflow.md` | Weak propagation, exploding search trees, stale choices, recomputation bugs, memory growth, tracing, or profiling |
+| `references/set-and-float-modeling.md` | Set variables, float-specific caveats, or mixed-domain modeling |
+| `references/scheduling-patterns.md` | Cumulative or resource models, sequencing constraints, or scheduling-specific branching and symmetry |
+| `references/propagator-implementation.md` | Custom propagator posting, lifecycle, propagation conditions, advisors, iteration, or rewriting |
+| `references/brancher-implementation.md` | Custom branchers, choices, commits, archives, heuristics, or NGL support |
+| `references/memory-handling.md` | Space, region, or heap allocation; handles; clone footprint; or disposal obligations |
+| `references/search-engines.md` | Selecting or tuning built-in `DFS`, `BAB`, `LDS`, restart, or portfolio search |
+| `references/search-engine-implementation.md` | Custom engine orchestration, ownership, replay, recomputation, LAO, or completeness invariants |
+| `references/cmake-consumption.md` | `find_package(Gecode CONFIG)`, imported targets, version checks, components, or vendored fallback |
+| `references/general-knowledge.md` | Advanced observability, staged model improvement, or conceptual framing beyond the always-on mental model |
