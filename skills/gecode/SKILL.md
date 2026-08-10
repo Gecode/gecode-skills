@@ -7,6 +7,10 @@ description: "Gecode architecture, modeling, cookbook-style modeling patterns, s
 
 Use this skill as the entry point for any Gecode-specific task. Carry the universal Gecode runtime model in mind for every response, then load only the additional reference files needed for the task.
 
+## Constraint Programming in One Paragraph
+
+Constraint programming represents each variable by a domain of still-possible values and repeatedly propagates constraints until no propagator can remove anything else or a domain becomes empty. Domain states form a lattice ordered by information (smaller domains contain more information). Treat a propagator as a contracting, weakly monotonic operation on that lattice: it can remove values but cannot restore them. Fair propagation reaches a simultaneous fixpoint, but with weakly monotonic propagators execution order can produce different, even incomparable, fixpoints and search-tree shapes. Weak monotonicity preserves the solution set, so complete search remains sound and complete even when the propagation trace, fixpoint strength, or solution order differs.
+
 ## Always-On Mental Model
 - Space is the home for variables, propagators, branchers, and optimization order.
 - Propagation is explicit: call `status()`.
@@ -58,4 +62,4 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 | `references/search-engines.md` | Selecting or tuning built-in `DFS`, `BAB`, `LDS`, restart, or portfolio search |
 | `references/search-engine-implementation.md` | Custom engine orchestration, ownership, replay, recomputation, LAO, or completeness invariants |
 | `references/cmake-consumption.md` | `find_package(Gecode CONFIG)`, imported targets, version checks, components, or vendored fallback |
-| `references/general-knowledge.md` | Constraint-programming foundations, propagation-versus-search reasoning, model-strength tradeoffs, symmetry, or performance interpretation beyond the always-on summary |
+| `references/general-knowledge.md` | Constraint-programming foundations, propagation-versus-search reasoning, search architecture and restoration, model-strength tradeoffs, symmetry, or performance interpretation beyond the always-on summary |
