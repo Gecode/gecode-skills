@@ -1,6 +1,6 @@
 ---
 name: gecode
-description: "Gecode architecture, modeling, cookbook-style modeling patterns, set/float/scheduling guidance, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, debugging/performance diagnosis, and downstream CMake consumption. Use for any materially Gecode-specific task: building or refining Gecode models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, diagnosing weak propagation or search pathologies, reasoning about set/float/resource-style models, or integrating Gecode into CMake projects."
+description: "Gecode architecture, modeling, cookbook-style modeling patterns, set-variable, float-variable, and scheduling guidance, propagators, branchers, memory management, search engine usage and implementation, recomputation/cloning behavior, debugging/performance diagnosis, and downstream CMake consumption. Use for any materially Gecode-specific task: building or refining Gecode models, implementing custom constraints or branchers, tuning DFS/BAB/RBS/PBS/LDS search, diagnosing weak propagation or search pathologies, reasoning about set, float, or resource-style models, or integrating Gecode into CMake projects."
 ---
 
 # Gecode
@@ -49,7 +49,8 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 | `references/modeling.md` | Model structure, variables, constraints, branching setup, or built-in search configuration |
 | `references/modeling-cookbook.md` | Recipe-style guidance for globals versus decompositions, channeling, symmetry, branching, or optimization setup |
 | `references/debugging-workflow.md` | Weak propagation, exploding search trees, stale choices, recomputation bugs, memory growth, tracing, or profiling |
-| `references/set-and-float-modeling.md` | Set variables, float-specific caveats, or mixed-domain modeling |
+| `references/set-variable-modeling.md` | Set variables, membership or partition models, set relations and operations, channeling, cardinality, or set branching |
+| `references/float-variable-modeling.md` | Float variables, interval semantics, float relations and expressions, mixed integer/float models, float branching, or float optimization |
 | `references/scheduling-patterns.md` | Cumulative or resource models, sequencing constraints, or scheduling-specific branching and symmetry |
 | `references/propagator-implementation.md` | Custom propagator posting, lifecycle, propagation conditions, advisors, iteration, or rewriting |
 | `references/brancher-implementation.md` | Custom branchers, choices, commits, archives, heuristics, or NGL support |
@@ -57,4 +58,4 @@ Use this skill as the entry point for any Gecode-specific task. Carry the univer
 | `references/search-engines.md` | Selecting or tuning built-in `DFS`, `BAB`, `LDS`, restart, or portfolio search |
 | `references/search-engine-implementation.md` | Custom engine orchestration, ownership, replay, recomputation, LAO, or completeness invariants |
 | `references/cmake-consumption.md` | `find_package(Gecode CONFIG)`, imported targets, version checks, components, or vendored fallback |
-| `references/general-knowledge.md` | Advanced observability, staged model improvement, or conceptual framing beyond the always-on mental model |
+| `references/general-knowledge.md` | Constraint-programming foundations, propagation-versus-search reasoning, model-strength tradeoffs, symmetry, or performance interpretation beyond the always-on summary |

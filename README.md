@@ -29,6 +29,7 @@ npx skills add Gecode/gecode-skills --skill gecode
 The skill routes internally to focused reference documents for:
 - Gecode architecture and runtime semantics
 - modeling and search setup
+- set-variable, float-variable, and scheduling models
 - custom propagators
 - custom branchers
 - memory management
